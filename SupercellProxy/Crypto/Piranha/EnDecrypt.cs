@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Blake2Sharp;
+using ClashRoyaleProxy;
 
 namespace SupercellProxy
 {
@@ -65,7 +68,7 @@ namespace SupercellProxy
                 Blake2b.Init();
                 Blake2b.Update(CustomKeyPair.PublicKey);
                 Blake2b.Update(Keys.OriginalPublicKey);
-                var tmpNonce = Blake2b.Finish();
+                byte[] tmpNonce = Blake2b.Finish();
 
                 // The decrypted payload has to be prefixed with the nonce from plain 10101
                 decryptedPayload = _10101_SessionKey.Concat(_10101_Nonce).Concat(decryptedPayload).ToArray();
@@ -85,7 +88,7 @@ namespace SupercellProxy
                     Blake2b.Update(_10101_Nonce);
                     Blake2b.Update(_10101_PublicKey);
                     Blake2b.Update(Keys.ModdedPublicKey);
-                    var tmpNonce = Blake2b.Finish();
+                    byte[] tmpNonce = Blake2b.Finish();
 
                     // The decrypted payload has to be prefixed with the nonce from 20103/20104 and the sharedkey from 20103/20104
                     decryptedPayload = _20103_20104_Nonce.Concat(_20103_20104_SharedKey).Concat(decryptedPayload).ToArray();
@@ -136,7 +139,7 @@ namespace SupercellProxy
                 Blake2b.Init();
                 Blake2b.Update(_10101_PublicKey);
                 Blake2b.Update(Keys.ModdedPublicKey);
-                var tmpNonce = Blake2b.Finish();
+                byte[] tmpNonce = Blake2b.Finish();
 
                 // Decrypt the payload the custom NaCl
                 decryptedPayload = CustomNaCl.OpenPublicBox(encryptedPayload.Skip(32).ToArray(), tmpNonce, Keys.GeneratedPrivateKey, _10101_PublicKey);
@@ -156,7 +159,7 @@ namespace SupercellProxy
                     Blake2b.Update(_10101_Nonce);
                     Blake2b.Update(CustomKeyPair.PublicKey);
                     Blake2b.Update(Keys.OriginalPublicKey);
-                    var tmpNonce = Blake2b.Finish();
+                    byte[] tmpNonce = Blake2b.Finish();
 
                     // Decrypt the payload with the custom NaCl
                     decryptedPayload = CustomNaCl.OpenPublicBox(encryptedPayload, tmpNonce, CustomKeyPair.SecretKey, Keys.OriginalPublicKey);
@@ -170,6 +173,32 @@ namespace SupercellProxy
                 else
                 {
                     return encryptedPayload;
+                }
+            }
+            else if (packetID == 24112)
+            {
+                _20103_20104_Nonce.Increment();
+                decryptedPayload = CustomNaCl.OpenSecretBox(new byte[16].Concat(encryptedPayload).ToArray(), _20103_20104_Nonce, _20103_20104_SharedKey);
+                using (BinaryReader reader = new BinaryReader(new MemoryStream(decryptedPayload)))
+                {
+                    int _Port = reader.ReadVInt();
+                    //Console.WriteLine(BitConverter.ToString(reader.ReadBytes(decryptedPayload.Length - 3)));
+                    string _IP = reader.ReadString();
+                    string _Session = reader.ReadString();
+                    string _Nonce = reader.ReadString();
+
+                    List<byte> data = new List<byte>();
+                    data.AddVInt(_Port);
+                    data.AddString("178.32.9.216");
+                    data.AddString(_Session);
+                    data.AddString(_Nonce);
+                    decryptedPayload = data.ToArray();
+
+                    Console.WriteLine("Port        : " + _Port);
+                    Console.WriteLine("IP          : " + _IP);
+                    Console.WriteLine("Session Key : " + _Session);
+
+                    new UDP(_IP, _Port);
                 }
             }
             else

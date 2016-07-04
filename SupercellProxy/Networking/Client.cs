@@ -38,7 +38,7 @@ namespace SupercellProxy
 
                 new ReceiveSendThread(ClientSocket, ServerSocket);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Log("Failed to enqueue client (" + ClientRemoteAdr + ")!");
                 Logger.Log("Check if you have a working internet connection.");

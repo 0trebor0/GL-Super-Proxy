@@ -45,8 +45,7 @@ namespace SupercellProxy
         {
             try
             {
-                var time = string.Format("{0:dd-MM_hh-mm-ss}", DateTime.Now);
-                File.WriteAllText(@"Packets\\" + Config.Game + "_" + ID + "_" + time + ".bin", BitConverter.ToString(DecryptedPayload));
+                File.WriteAllText(@"Packets\\" + Config.Game + "_" + ID + ".bin", BitConverter.ToString(DecryptedPayload));
             }
             catch (Exception ex)
             {

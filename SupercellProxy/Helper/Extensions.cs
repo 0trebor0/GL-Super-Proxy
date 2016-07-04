@@ -97,7 +97,7 @@ namespace SupercellProxy
 
         public static void AddString(this List<byte> list, string data)
         {
-            if (data == null)
+            if (string.IsNullOrEmpty(data))
                 list.AddRange(BitConverter.GetBytes(-1).Reverse());
             else
             {
@@ -132,7 +132,7 @@ namespace SupercellProxy
 
         public static string ReadString(this BinaryReader br)
         {
-            int lengthOfUTF8Str = br.ReadIntWithEndian();
+            int lengthOfUTF8Str = br.ReadInt32();
             string UTF8Str;
 
             if (lengthOfUTF8Str > -1)

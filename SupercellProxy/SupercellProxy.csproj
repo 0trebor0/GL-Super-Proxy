@@ -150,6 +150,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UDP\UDP.cs" />
     <Compile Include="UI\Loader.cs">
       <SubType>Form</SubType>
     </Compile>
