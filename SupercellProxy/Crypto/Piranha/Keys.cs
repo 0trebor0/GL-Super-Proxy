@@ -44,7 +44,10 @@ namespace SupercellProxy
                 // CoC 8.332.14
                 // OriginalPublicKey = "bb9ca4c6b52ecdb40267c3bcca03679201a403ef6230b9e488db949b58bc7479".ToByteArray();
                 // CR  1.3.2
-                OriginalPublicKey = "2971520277bb38734fc36e2a0d95e76e969379a5372a44c1b2fd3c1766b0016a".ToByteArray();
+                // OriginalPublicKey = "2971520277bb38734fc36e2a0d95e76e969379a5372a44c1b2fd3c1766b0016a".ToByteArray();
+                // CR 1.4
+                OriginalPublicKey = "9BC23206948F104820E347ED47FA92256CA843B72AEC503A0982889CD6A7EB38".ToByteArray();
+
                 Logger.Log("Latest public key for " + Config.Game + " downloaded!");
                 Logger.Log("    => " + OriginalPublicKey.ToHexString());
             }

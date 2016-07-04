@@ -175,32 +175,6 @@ namespace SupercellProxy
                     return encryptedPayload;
                 }
             }
-            else if (packetID == 24112)
-            {
-                _20103_20104_Nonce.Increment();
-                decryptedPayload = CustomNaCl.OpenSecretBox(new byte[16].Concat(encryptedPayload).ToArray(), _20103_20104_Nonce, _20103_20104_SharedKey);
-                using (BinaryReader reader = new BinaryReader(new MemoryStream(decryptedPayload)))
-                {
-                    int _Port = reader.ReadVInt();
-                    //Console.WriteLine(BitConverter.ToString(reader.ReadBytes(decryptedPayload.Length - 3)));
-                    string _IP = reader.ReadString();
-                    string _Session = reader.ReadString();
-                    string _Nonce = reader.ReadString();
-
-                    List<byte> data = new List<byte>();
-                    data.AddVInt(_Port);
-                    data.AddString("178.32.9.216");
-                    data.AddString(_Session);
-                    data.AddString(_Nonce);
-                    decryptedPayload = data.ToArray();
-
-                    Console.WriteLine("Port        : " + _Port);
-                    Console.WriteLine("IP          : " + _IP);
-                    Console.WriteLine("Session Key : " + _Session);
-
-                    new UDP(_IP, _Port);
-                }
-            }
             else
             {
                 if (p.Destination == PacketDestination.FROM_CLIENT)
